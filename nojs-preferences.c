@@ -188,7 +188,7 @@ static void _nojs_preferences_on_allow_all_sites_changed(NoJSPreferences *self,
 	g_signal_handler_block(priv->manager, priv->signalManagerChangedAllowAllSitesID);
 
 	state=gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(priv->allowAllSitesCheckbox));
-	g_object_set(priv->manager, "allow-all-sites", state, NULL);
+	nojs_set_allow_all_sites(priv->manager, state);
 
 	g_signal_handler_unblock(priv->manager, priv->signalManagerChangedAllowAllSitesID);
 }
@@ -202,7 +202,7 @@ static void _nojs_preferences_on_manager_allow_all_sites_changed(NoJSPreferences
 	gboolean				state;
 
 	/* Get new value from manager */
-	g_object_get(manager, "allow-all-sites", &state, NULL);
+	state=nojs_get_allow_all_sites(manager);
 
 	/* Set toogle in widget (but block signal for toggle) */
 	g_signal_handler_block(priv->allowAllSitesCheckbox, priv->signalAllowAllSitesToggledID);
@@ -225,7 +225,7 @@ static void _nojs_preferences_on_block_unknown_domains_changed(NoJSPreferences *
 
 	state=gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(priv->blockUnknownDomainsCheckbox));
 	policy=(state ? NOJS_POLICY_BLOCK : NOJS_POLICY_ACCEPT);
-	g_object_set(priv->manager, "unknown-domain-policy", policy, NULL);
+	nojs_set_policy_for_unknown_domain(priv->manager, policy);
 
 	g_signal_handler_unblock(priv->manager, priv->signalManagerChangedUnknownDomainPolicyID);
 }
@@ -240,7 +240,7 @@ static void _nojs_preferences_on_manager_unknown_domain_policy_changed(NoJSPrefe
 	gboolean				state;
 
 	/* Get new value from manager */
-	g_object_get(manager, "unknown-domain-policy", &policy, NULL);
+	policy=nojs_get_policy_for_unknown_domain(manager);
 
 	/* Set toogle in widget (but block signal for toggle) */
 	g_signal_handler_block(priv->blockUnknownDomainsCheckbox, priv->signalBlockUnknownDomainsToggledID);
@@ -262,7 +262,7 @@ static void _nojs_preferences_on_check_second_level_only_changed(NoJSPreferences
 	g_signal_handler_block(priv->manager, priv->signalManagerChangedCheckSecondLevelID);
 
 	state=gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(priv->checkSecondLevelOnlyCheckbox));
-	g_object_set(priv->manager, "only-second-level", state, NULL);
+	nojs_set_only_second_level_domain(priv->manager, state);
 
 	g_signal_handler_unblock(priv->manager, priv->signalManagerChangedCheckSecondLevelID);
 }
@@ -276,7 +276,7 @@ static void _nojs_preferences_on_manager_only_second_level_changed(NoJSPreferenc
 	gboolean				state;
 
 	/* Get new value from manager */
-	g_object_get(manager, "only-second-level", &state, NULL);
+	state=nojs_get_only_second_level_domain(manager);
 
 	/* Set toogle in widget (but block signal for toggle) */
 	g_signal_handler_block(priv->checkSecondLevelOnlyCheckbox, priv->signalCheckSecondLevelOnlyToggledID);

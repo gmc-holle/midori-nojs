@@ -969,9 +969,53 @@ void nojs_set_policy_for_unknown_domain(NoJS *self, NoJSPolicy inPolicy)
 	g_return_if_fail(IS_NOJS(self));
 	g_return_if_fail(inPolicy>=NOJS_POLICY_ACCEPT && inPolicy<=NOJS_POLICY_BLOCK);
 
-	self->priv->unknownDomainPolicy=inPolicy;
+	if(self->priv->unknownDomainPolicy!=inPolicy)
+	{
+		self->priv->unknownDomainPolicy=inPolicy;
+		midori_extension_set_integer(self->priv->extension, "unknown-domain-policy", inPolicy);
+		g_object_notify_by_pspec(G_OBJECT(self), NoJSProperties[PROP_UNKNOWN_DOMAIN_POLICY]);
+	}
 }
 
+/* Get/set flag to allow javascript at all sites */
+gboolean nojs_get_allow_all_sites(NoJS *self)
+{
+	g_return_val_if_fail(IS_NOJS(self), TRUE);
+
+	return(self->priv->allowAllSites);
+}
+
+void nojs_set_allow_all_sites(NoJS *self, gboolean inAllow)
+{
+	g_return_if_fail(IS_NOJS(self));
+
+	if(self->priv->allowAllSites!=inAllow)
+	{
+		self->priv->allowAllSites=inAllow;
+		midori_extension_set_boolean(self->priv->extension, "allow-all-sites", inAllow);
+		g_object_notify_by_pspec(G_OBJECT(self), NoJSProperties[PROP_ALLOW_ALL_SITES]);
+	}
+}
+
+/* Get/set flag to check for second-level domanins only */
+gboolean nojs_get_only_second_level_domain(NoJS *self)
+{
+	g_return_val_if_fail(IS_NOJS(self), TRUE);
+
+	return(self->priv->checkOnlySecondLevel);
+}
+
+void nojs_set_only_second_level_domain(NoJS *self, gboolean inOnlySecondLevel)
+{
+	g_return_if_fail(IS_NOJS(self));
+
+	if(self->priv->checkOnlySecondLevel!=inOnlySecondLevel)
+	{
+		self->priv->checkOnlySecondLevel=inOnlySecondLevel;
+		midori_extension_set_boolean(self->priv->extension, "only-second-level", inOnlySecondLevel);
+		g_object_notify_by_pspec(G_OBJECT(self), NoJSProperties[PROP_ONLY_SECOND_LEVEL]);
+	}
+}
 
 /************************************************************************************/
 

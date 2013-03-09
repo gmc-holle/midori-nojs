@@ -72,6 +72,12 @@ void nojs_set_policy(NoJS *self, const gchar *inDomain, NoJSPolicy inPolicy);
 NoJSPolicy nojs_get_policy_for_unknown_domain(NoJS *self);
 void nojs_set_policy_for_unknown_domain(NoJS *self, NoJSPolicy inPolicy);
 
+gboolean nojs_get_allow_all_sites(NoJS *self);
+void nojs_set_allow_all_sites(NoJS *self, gboolean inAllow);
+
+gboolean nojs_get_only_second_level_domain(NoJS *self);
+void nojs_set_only_second_level_domain(NoJS *self, gboolean inOnlySecondLevel);
+
 /* Enumeration */
 GType nojs_policy_get_type(void) G_GNUC_CONST;
 #define NOJS_TYPE_POLICY	(nojs_policy_get_type())

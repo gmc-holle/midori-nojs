@@ -21,9 +21,9 @@ static void _nojs_on_activate(MidoriExtension *inExtension, MidoriApp *inApp, gp
 	g_return_if_fail(noJS==NULL);
 
 	noJS=nojs_new(inExtension, inApp);
-	// TODO: g_object_set(noJS, "ask-for-unknown-policy", midori_extension_get_boolean(inExtension, "ask-for-unknown-policy"), NULL);
-	// TODO: g_object_set(noJS, "ask-for-unknown-policy", midori_extension_get_boolean(inExtension, "ask-for-unknown-policy"), NULL);
-	// TODO: g_object_set(noJS, "ask-for-unknown-policy", midori_extension_get_boolean(inExtension, "ask-for-unknown-policy"), NULL);
+	nojs_set_policy_for_unknown_domain(noJS, midori_extension_get_integer(inExtension, "unknown-domain-policy"));
+	nojs_set_allow_all_sites(noJS, midori_extension_get_boolean(inExtension, "allow-all-sites"));
+	nojs_set_only_second_level_domain(noJS, midori_extension_get_boolean(inExtension, "only-second-level"));
 }
 
 /* This extension was deactivated */
@@ -67,9 +67,9 @@ MidoriExtension *extension_init(void)
 												"authors", "Stephan Haller <nomad@froevel.de>",
 												NULL);
 
-	// TODO: midori_extension_install_boolean(extension, "ask-for-unknown-policy", TRUE);
-	// TODO: midori_extension_install_boolean(extension, "show-details-when-ask", FALSE);
-	// TODO: midori_extension_install_boolean(extension, "show-details-when-ask", FALSE);
+	midori_extension_install_integer(extension, "unknown-domain-policy", NOJS_POLICY_BLOCK);
+	midori_extension_install_boolean(extension, "allow-all-sites", FALSE);
+	midori_extension_install_boolean(extension, "only-second-level", TRUE);
 
 	g_signal_connect(extension, "activate", G_CALLBACK(_nojs_on_activate), NULL);
 	g_signal_connect(extension, "deactivate", G_CALLBACK(_nojs_on_deactivate), NULL);
