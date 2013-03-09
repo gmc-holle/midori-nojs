@@ -782,6 +782,41 @@ static void nojs_class_init(NoJSClass *klass)
 	g_object_class_install_properties(gobjectClass, PROP_LAST, NoJSProperties);
 
 	/* Define signals */
+
+	/* Why does this signal exist?
+	 * 
+	 * The problem I faced when developing this extension was
+	 * that I needed to cancel a SoupMessage as soon as possible
+	 * (when http headers were received).
+	 * I tried to connect to signal "resource-response-received"
+	 * of WebKitWebView but the SoupMessage instance was not
+	 * exactly the same which were sent or received by SoupSession.
+	 * So I could not cancel the SoupMessage or better: I cancelled
+	 * a SoupMessage which is not be handled so it had no effect.
+	 * The body of SoupMessage was still being loaded and javascript
+	 * was executed. I think the problem is that webkit-gtk creates
+	 * a copy of the real SoupMessage which is going to be sent and
+	 * received.
+	 * 
+	 * So I decided to connect to signal "got-headers" of every
+	 * SoupMessage sent by the default SoupSession which I notice
+	 * by connecting to signal "request-started" of SoupSession. Each
+	 * NoJSView connects to signal "resource-request-starting" of
+	 * WebKitWebView to remember each URI going to be loaded. When
+	 * a SoupMessage hits "got-headers" and is a javascript resource
+	 * I can cancel the message immediately and clear the body which
+	 * causes webkit-gtk to copy a empty body if it does at all as the
+	 * SoupMessage was cancelled. Then I emit this signal
+	 * "uri-load-policy-status" to notify each view but the cancellation.
+	 * (It also notifies all views if it is going to load to keep the
+	 * menu in right state.) Each view will check if it _could_ be a
+	 * resource itself requested and will update its menu accordingly.
+	 * It might happen that a request will match two views because only
+	 * the URI will be checked by the view because I cannot determine
+	 * to which view the SoupMessage belongs to. But it doesn't matter
+	 * because if a javascript resource was denied or allowed in one view
+	 * it is likely be denied or allowed in other views too ;)
+	 */
 	NoJSSignals[URI_LOAD_POLICY_STATUS]=
 		g_signal_new("uri-load-policy-status",
 						G_TYPE_FROM_CLASS(klass),
