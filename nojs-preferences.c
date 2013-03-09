@@ -604,7 +604,7 @@ static void nojs_preferences_init(NoJSPreferences *self)
 
 	/* Get content area to add gui controls to */
 	priv->contentArea=gtk_dialog_get_content_area(GTK_DIALOG(self));
-#ifdef HAVE_GTK3
+#ifdef GTK__3_0_VERSION
 	vbox=gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_box_set_homogeneous(GTK_BOX(vbox), FALSE);
 #else
@@ -655,7 +655,7 @@ static void nojs_preferences_init(NoJSPreferences *self)
 	/* Set up domain list view */
 	priv->list=gtk_tree_view_new_with_model(GTK_TREE_MODEL(priv->listStore));
 
-#ifndef HAVE_GTK3
+#ifndef GTK__3_0_VERSION
 	gtk_widget_set_size_request(priv->list, -1, 300);
 #endif
 
@@ -680,7 +680,7 @@ static void nojs_preferences_init(NoJSPreferences *self)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(priv->list), column);
 
 	scrolled=gtk_scrolled_window_new(NULL, NULL);
-#ifdef HAVE_GTK3
+#ifdef GTK__3_0_VERSION
 	gtk_scrolled_window_set_min_content_height(GTK_SCROLLED_WINDOW(scrolled), height*10);
 #endif
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -689,7 +689,7 @@ static void nojs_preferences_init(NoJSPreferences *self)
 	gtk_box_pack_start(GTK_BOX(vbox), scrolled, TRUE, TRUE, 5);
 
 	/* Set up cookie domain list management buttons */
-#ifdef HAVE_GTK3
+#ifdef GTK__3_0_VERSION
 	hbox=gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_box_set_homogeneous(GTK_BOX(hbox), FALSE);
 #else
