@@ -149,6 +149,9 @@ static gboolean _nojs_view_menu_item_change_policy(NoJSView *self, const gchar *
 	GList				*items, *iter;
 	gboolean			updated;
 
+	/* Handle accept-for-session like accept when showing or hiding menu items */
+	if(inPolicy==NOJS_POLICY_ACCEPT_TEMPORARILY) inPolicy=NOJS_POLICY_ACCEPT;
+
 	/* Update menu items */
 	updated=FALSE;
 	items=gtk_container_get_children(GTK_CONTAINER(priv->menu));
@@ -163,6 +166,9 @@ static gboolean _nojs_view_menu_item_change_policy(NoJSView *self, const gchar *
 
 			itemDomain=(const gchar*)g_object_get_data(G_OBJECT(item), "domain");
 			itemPolicy=GPOINTER_TO_INT(g_object_get_data(G_OBJECT(item), "policy"));
+
+			/* Handle accept-for-session like accept when showing or hiding menu items */
+			if(itemPolicy==NOJS_POLICY_ACCEPT_TEMPORARILY) itemPolicy=NOJS_POLICY_ACCEPT;
 
 			/* If menu item has "domain"-data update its visibility state
 			 * depending on matching policy
@@ -258,7 +264,7 @@ static void _nojs_view_add_site_to_menu(NoJSView *self, const gchar *inDomain, N
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), itemImage);
 	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(item), TRUE);
 	gtk_menu_shell_insert(GTK_MENU_SHELL(priv->menu), item, INSERT_POSITION);
-	if(inPolicy!=NOJS_POLICY_ACCEPT) gtk_widget_show_all(item);
+	if(inPolicy!=NOJS_POLICY_ACCEPT && inPolicy!=NOJS_POLICY_ACCEPT_TEMPORARILY) gtk_widget_show_all(item);
 	g_object_set_data_full(G_OBJECT(item), "domain", g_strdup(inDomain), (GDestroyNotify)g_free);
 	g_object_set_data(G_OBJECT(item), "policy", GINT_TO_POINTER(NOJS_POLICY_ACCEPT));
 	g_signal_connect_swapped(item, "activate", G_CALLBACK(_nojs_view_on_menu_item_activate), self);
@@ -276,7 +282,7 @@ static void _nojs_view_add_site_to_menu(NoJSView *self, const gchar *inDomain, N
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), itemImage);
 	gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(item), TRUE);
 	gtk_menu_shell_insert(GTK_MENU_SHELL(priv->menu), item, INSERT_POSITION);
-	if(inPolicy!=NOJS_POLICY_ACCEPT_TEMPORARILY) gtk_widget_show_all(item);
+	if(inPolicy!=NOJS_POLICY_ACCEPT && inPolicy!=NOJS_POLICY_ACCEPT_TEMPORARILY) gtk_widget_show_all(item);
 	g_object_set_data_full(G_OBJECT(item), "domain", g_strdup(inDomain), (GDestroyNotify)g_free);
 	g_object_set_data(G_OBJECT(item), "policy", GINT_TO_POINTER(NOJS_POLICY_ACCEPT_TEMPORARILY));
 	g_signal_connect_swapped(item, "activate", G_CALLBACK(_nojs_view_on_menu_item_activate), self);
